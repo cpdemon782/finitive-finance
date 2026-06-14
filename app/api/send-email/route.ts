@@ -9,7 +9,7 @@ export async function POST(request: Request) {
 
     const { data, error } = await resend.emails.send({
       from: 'Finitive Finance <notifications@resend.dev>',
-      to,
+      to: 'simon@clesandco.com.au',
       subject,
       html,
     })
