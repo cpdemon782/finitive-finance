@@ -32,6 +32,7 @@ export default function PipelinePage() {
   const [view, setView] = useState<'board' | 'table'>('board')
   const [selectedLead, setSelectedLead] = useState<any>(null)
   const [movingStage, setMovingStage] = useState(false)
+  const [emailStatus, setEmailStatus] = useState<string>('')
 
   useEffect(() => {
     async function init() {
@@ -57,6 +58,10 @@ export default function PipelinePage() {
 
   async function moveStage(leadId: string, newStage: string) {
     setMovingStage(true)
+    setEmailStatus('')
+
+    const lead = leads.find(l => l.id === leadId)
+
     const { error } = await supabase
       .from('leads')
       .update({ stage: newStage, updated_at: new Date().toISOString() })
@@ -67,8 +72,83 @@ export default function PipelinePage() {
       if (selectedLead?.id === leadId) {
         setSelectedLead((prev: any) => ({ ...prev, stage: newStage }))
       }
+
+      // Send email if affiliate lead
+      if (lead && lead.source === 'affiliate' && lead.submitted_by) {
+        try {
+          const { data: affiliateData } = await supabase
+            .from('users')
+            .select('email, full_name')
+            .eq('id', lead.submitted_by)
+            .single()
+
+          if (affiliateData) {
+            const dealValue = lead.deal_size_max || 0
+            const commissionValue = dealValue * 0.02
+
+            const res = await fetch('/api/send-email', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                to: affiliateData.email,
+                subject: `Update on your referral — ${lead.company_name}`,
+                html: `
+                  <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:40px 20px;">
+                    <div style="background:#1a1610;padding:24px;border-radius:12px 12px 0 0;text-align:center;">
+                      <div style="color:#c9a84c;font-size:20px;font-weight:700;">Finitive Finance</div>
+                      <div style="color:#ffffff;font-size:12px;margin-top:4px;opacity:0.6;">DEAL PLATFORM</div>
+                    </div>
+                    <div style="background:#ffffff;padding:32px;border:1px solid #e8e4db;border-top:none;">
+                      <p style="color:#5a5245;font-size:15px;margin:0 0 8px;">Hi ${affiliateData.full_name},</p>
+                      <p style="color:#1a1610;font-size:22px;font-weight:600;margin:0 0 24px;">Your referral has been updated</p>
+                      <div style="background:#f5f3ee;border-radius:12px;padding:20px 24px;margin-bottom:24px;">
+                        <div style="font-size:18px;font-weight:600;color:#1a1610;margin-bottom:4px;">${lead.company_name}</div>
+                        <div style="font-size:13px;color:#9a9080;margin-bottom:16px;">Deal value: $${(dealValue/1000000).toFixed(0)}M</div>
+                        <div style="margin-bottom:8px;">
+                          <span style="font-size:11px;color:#9a9080;">NEW STAGE: </span>
+                          <span style="background:#c9a84c;color:#fff;font-size:12px;font-weight:600;padding:3px 10px;border-radius:20px;">${newStage}</span>
+                        </div>
+                        <div>
+                          <span style="font-size:11px;color:#9a9080;">EST. COMMISSION: </span>
+                          <span style="font-size:16px;font-weight:700;color:#18b877;">$${(commissionValue/1000000).toFixed(1)}M</span>
+                        </div>
+                      </div>
+                      <p style="color:#5a5245;font-size:14px;line-height:1.6;margin:0 0 24px;">
+                        The Finitive Finance team has moved your referral <strong>${lead.company_name}</strong> to <strong>${newStage}</strong>.
+                        Log in to your affiliate portal to track the full progress.
+                      </p>
+                      <div style="text-align:center;margin-bottom:24px;">
+                        <a href="https://finitive-finance.vercel.app/affiliate"
+                           style="display:inline-block;background:#c9a84c;color:#fff;font-size:14px;font-weight:600;padding:14px 32px;border-radius:8px;text-decoration:none;">
+                          View in portal →
+                        </a>
+                      </div>
+                      <p style="color:#9a9080;font-size:13px;">Questions? Contact us at <a href="mailto:affiliates@finitivefinance.com" style="color:#c9a84c;">affiliates@finitivefinance.com</a></p>
+                    </div>
+                    <div style="background:#f5f3ee;padding:16px;border-radius:0 0 12px 12px;text-align:center;border:1px solid #e8e4db;border-top:none;">
+                      <p style="color:#9a9080;font-size:12px;margin:0;">© 2026 Finitive Finance. All rights reserved.</p>
+                    </div>
+                  </div>
+                `
+              })
+            })
+
+            if (res.ok) {
+              setEmailStatus('✓ Affiliate notified by email')
+            } else {
+              setEmailStatus('Stage updated — email notification failed')
+            }
+          }
+        } catch (emailError) {
+          console.error('Email failed:', emailError)
+          setEmailStatus('Stage updated — email notification failed')
+        }
+      }
     }
     setMovingStage(false)
+
+    // Clear email status after 4 seconds
+    setTimeout(() => setEmailStatus(''), 4000)
   }
 
   async function handleSignOut() {
@@ -134,7 +214,11 @@ export default function PipelinePage() {
             <div className="text-base font-semibold text-[#1a1610]">Deal Pipeline</div>
             <div className="text-xs text-[#9a9080]">{leads.filter(l => !['Closed','Lost'].includes(l.stage)).length} active deals</div>
           </div>
-          {/* View toggle */}
+          {emailStatus && (
+            <div className="text-xs font-medium text-[#18b877] bg-green-50 px-3 py-1.5 rounded-lg border border-green-100">
+              {emailStatus}
+            </div>
+          )}
           <div className="flex bg-[#f5f3ee] rounded-lg p-1 gap-1 border border-black/5">
             <button
               onClick={() => setView('board')}
@@ -164,13 +248,11 @@ export default function PipelinePage() {
               const stageLeads = leads.filter(l => l.stage === stage)
               return (
                 <div key={stage} className="w-52 flex-shrink-0 flex flex-col gap-2">
-                  {/* Column header */}
                   <div className="flex items-center gap-2 px-1 pb-2">
                     <div className={`w-2 h-2 rounded-full ${stageDotColors[stage]}`}></div>
                     <span className="text-xs font-semibold text-[#5a5245]">{stage}</span>
                     <span className="ml-auto text-xs text-[#9a9080] font-mono bg-white px-2 py-0.5 rounded-full border border-black/5">{stageLeads.length}</span>
                   </div>
-                  {/* Cards */}
                   {stageLeads.map(lead => (
                     <div
                       key={lead.id}
@@ -192,7 +274,6 @@ export default function PipelinePage() {
                       </div>
                     </div>
                   ))}
-                  {/* Empty state */}
                   {stageLeads.length === 0 && (
                     <div className="border-2 border-dashed border-black/10 rounded-xl p-4 text-center">
                       <p className="text-xs text-[#9a9080]">No deals</p>
@@ -262,17 +343,8 @@ export default function PipelinePage() {
             <div className="text-2xl font-bold text-[#c9a84c] font-mono mb-4">
               ${((selectedLead.deal_size_max || 0)/1000000).toFixed(0)}M
             </div>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setSelectedLead(null)}
-                className="flex-1 py-2 bg-[#f5f3ee] text-[#5a5245] text-xs font-medium rounded-lg hover:bg-[#e8e4db]"
-              >
-                Close
-              </button>
-            </div>
           </div>
 
-          {/* Deal info */}
           <div className="p-4 border-b border-black/5">
             <div className="text-[10px] font-mono text-[#9a9080] mb-3 tracking-widest">DEAL INFO</div>
             <div className="space-y-2 text-sm">
@@ -299,9 +371,13 @@ export default function PipelinePage() {
             </div>
           </div>
 
-          {/* Move stage */}
           <div className="p-4 border-b border-black/5">
-            <div className="text-[10px] font-mono text-[#9a9080] mb-3 tracking-widest">MOVE STAGE</div>
+            <div className="text-[10px] font-mono text-[#9a9080] mb-3 tracking-widest">
+              MOVE STAGE
+              {selectedLead.source === 'affiliate' && (
+                <span className="ml-2 text-[#18b877] normal-case">· affiliate will be emailed</span>
+              )}
+            </div>
             <div className="flex flex-col gap-2">
               {STAGES.map(stage => (
                 <button
@@ -311,7 +387,7 @@ export default function PipelinePage() {
                   className={`py-2 px-3 rounded-lg text-xs font-medium text-left transition-all ${
                     stage === selectedLead.stage
                       ? 'bg-[#c9a84c] text-white cursor-default'
-                      : 'bg-[#f5f3ee] text-[#5a5245] hover:bg-[#e8e4db] cursor-pointer'
+                      : 'bg-[#f5f3ee] text-[#5a5245] hover:bg-[#e8e4db] cursor-pointer disabled:opacity-50'
                   }`}
                 >
                   {stage === selectedLead.stage ? '✓ ' : ''}{stage}
@@ -320,7 +396,6 @@ export default function PipelinePage() {
             </div>
           </div>
 
-          {/* Description */}
           {selectedLead.description && (
             <div className="p-4">
               <div className="text-[10px] font-mono text-[#9a9080] mb-2 tracking-widest">NOTES</div>
