@@ -51,13 +51,16 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#faf9f5] via-[#f0ece0] to-[#e8e0cc]">
       <div className="w-full max-w-md px-5">
+
+        {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-[#1a1610] rounded-2xl mb-4 shadow-lg">
-            <span className="text-[#c9a84c] font-bold text-xl tracking-tight">FF</span>
-          </div>
-          <h1 className="text-2xl font-semibold text-[#1a1610] tracking-tight">Finitive Finance</h1>
-          <p className="text-sm text-[#9a9080] mt-1">Deal Platform</p>
+          <img
+            src="/logo.jpeg"
+            alt="Finitive Finance"
+            style={{ height: '80px', width: 'auto', objectFit: 'contain', margin: '0 auto', display: 'block' }}
+          />
         </div>
+
         <div className="bg-white rounded-2xl p-8 shadow-xl border border-[#c9a84c]/10">
           <div className="flex bg-[#f5f3ee] rounded-lg p-1 gap-1 mb-6 border border-black/5">
             <button
