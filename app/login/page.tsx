@@ -135,9 +135,9 @@ export default function LoginPage() {
             {loading ? 'Signing in...' : 'Sign in'}
           </button>
           <div className="mt-5 flex items-center justify-center gap-4 text-xs text-[#b0a898]">
-            <a href="#" className="hover:text-[#c9a84c] transition-colors">Privacy Policy</a>
-            <span>·</span>
-            <a href="#" className="hover:text-[#c9a84c] transition-colors">Terms & Conditions</a>
+<a href="/privacy" className="hover:text-[#c9a84c] transition-colors">Privacy Policy</a>
+<span>·</span>
+<a href="/terms" className="hover:text-[#c9a84c] transition-colors">Terms & Conditions</a>
           </div>
         </div>
         <p className="text-center text-xs text-[#c0b8a8] mt-6">
