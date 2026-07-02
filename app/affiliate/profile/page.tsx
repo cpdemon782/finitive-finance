@@ -131,4 +131,110 @@ export default function ProfilePage() {
             <button
               onClick={handleSave}
               disabled={saving}
-              className="px-4 py-2 bg-[#c9a84c] text-white text-sm font-medium rounded-lg hover:bg-[#a8863a]
+              className="px-4 py-2 bg-[#c9a84c] text-white text-sm font-medium rounded-lg hover:bg-[#a8863a] disabled:opacity-60 transition-colors"
+            >
+              {saving ? 'Saving...' : 'Save changes'}
+            </button>
+          </div>
+        </div>
+
+        <div className="p-6 max-w-2xl">
+
+          {/* Avatar */}
+          <div className="bg-white rounded-xl border border-black/5 shadow-sm p-5 mb-4 flex items-center gap-4">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#c9a84c] to-[#a8863a] flex items-center justify-center text-xl font-bold text-white flex-shrink-0">
+              {user?.full_name?.split(' ').map((n: string) => n[0]).join('') || '?'}
+            </div>
+            <div>
+              <div className="text-base font-semibold text-[#1a1610]">{user?.full_name}</div>
+              <div className="text-sm text-[#9a9080]">{user?.email}</div>
+              <div className="text-xs text-[#c9a84c] mt-1 font-medium">Affiliate Partner</div>
+            </div>
+          </div>
+
+          {/* Personal details */}
+          <div className="bg-white rounded-xl border border-black/5 shadow-sm overflow-hidden mb-4">
+            <div className="px-5 py-4 border-b border-black/5">
+              <div className="text-sm font-semibold text-[#1a1610]">Personal details</div>
+            </div>
+            <div className="p-5 grid grid-cols-2 gap-4">
+              <div className="col-span-2">
+                <label className="block text-xs font-medium text-[#5a5245] mb-1.5">Full name</label>
+                <input
+                  name="full_name"
+                  value={form.full_name}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2.5 text-sm rounded-lg border border-black/10 bg-[#f5f3ee] text-[#1a1610] focus:outline-none focus:border-[#c9a84c] focus:bg-white transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-[#5a5245] mb-1.5">Email address</label>
+                <input
+                  name="email"
+                  value={form.email}
+                  disabled
+                  className="w-full px-3 py-2.5 text-sm rounded-lg border border-black/10 bg-[#f5f3ee] text-[#9a9080] cursor-not-allowed"
+                />
+                <p className="text-[10px] text-[#9a9080] mt-1">Email cannot be changed</p>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-[#5a5245] mb-1.5">Phone number</label>
+                <input
+                  name="phone"
+                  value={form.phone}
+                  onChange={handleChange}
+                  placeholder="+61..."
+                  className="w-full px-3 py-2.5 text-sm rounded-lg border border-black/10 bg-[#f5f3ee] text-[#1a1610] placeholder-[#b0a898] focus:outline-none focus:border-[#c9a84c] focus:bg-white transition-all"
+                />
+              </div>
+              <div className="col-span-2">
+                <label className="block text-xs font-medium text-[#5a5245] mb-1.5">Company name</label>
+                <input
+                  name="company_name"
+                  value={form.company_name}
+                  onChange={handleChange}
+                  placeholder="Your company..."
+                  className="w-full px-3 py-2.5 text-sm rounded-lg border border-black/10 bg-[#f5f3ee] text-[#1a1610] placeholder-[#b0a898] focus:outline-none focus:border-[#c9a84c] focus:bg-white transition-all"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Commission info */}
+          <div className="bg-white rounded-xl border border-black/5 shadow-sm overflow-hidden mb-4">
+            <div className="px-5 py-4 border-b border-black/5">
+              <div className="text-sm font-semibold text-[#1a1610]">Commission details</div>
+            </div>
+            <div className="p-5">
+              <div className="flex items-center justify-between py-2 border-b border-black/5">
+                <span className="text-sm text-[#9a9080]">Commission rate</span>
+                <span className="text-sm font-semibold text-[#c9a84c] font-mono">
+                  {((user?.commission_rate || 0.02) * 100).toFixed(1)}%
+                </span>
+              </div>
+              <div className="flex items-center justify-between py-2 border-b border-black/5">
+                <span className="text-sm text-[#9a9080]">Payment method</span>
+                <span className="text-sm font-medium text-[#1a1610]">Bank transfer</span>
+              </div>
+              <div className="flex items-center justify-between py-2">
+                <span className="text-sm text-[#9a9080]">Member since</span>
+                <span className="text-sm font-medium text-[#1a1610]">
+                  {new Date(user?.created_at).toLocaleDateString('en-AU', { month: 'long', year: 'numeric' })}
+                </span>
+              </div>
+              <p className="text-xs text-[#9a9080] mt-3">To update your commission rate or payment details, contact <a href="mailto:affiliates@finitivefinance.app" className="text-[#c9a84c]">affiliates@finitivefinance.app</a></p>
+            </div>
+          </div>
+
+          {/* Legal links */}
+          <div className="flex gap-4 text-xs text-[#9a9080]">
+            <a href="/privacy" className="hover:text-[#c9a84c]">Privacy Policy</a>
+            <span>·</span>
+            <a href="/terms" className="hover:text-[#c9a84c]">Terms & Conditions</a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  )
+}
