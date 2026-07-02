@@ -55,7 +55,7 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <img
-            src="/logo.jpeg"
+            src="/logo.png"
             alt="Finitive Finance"
             style={{ height: '80px', width: 'auto', objectFit: 'contain', margin: '0 auto', display: 'block' }}
           />
