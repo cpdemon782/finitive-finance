@@ -11,6 +11,7 @@ export default function SubmitLeadPage() {
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState('')
+  const [commissionRate, setCommissionRate] = useState(0.02)
 
   const [form, setForm] = useState({
     company_name: '',
@@ -34,6 +35,12 @@ export default function SubmitLeadPage() {
       if (!profile) { router.push('/login'); return }
       if (profile.role !== 'affiliate') { router.push('/dashboard'); return }
       setUser({ ...user, ...profile })
+      const { data: rateData } = await supabase
+        .from('users')
+        .select('commission_rate')
+        .eq('id', user.id)
+        .single()
+      if (rateData?.commission_rate) setCommissionRate(rateData.commission_rate)
       setLoading(false)
     }
     init()
@@ -78,7 +85,6 @@ export default function SubmitLeadPage() {
       return
     }
 
-    // Notify internal team by email
     try {
       await fetch('/api/send-email', {
         method: 'POST',
@@ -105,7 +111,7 @@ export default function SubmitLeadPage() {
                 ${form.description ? `<div style="margin-bottom:16px;"><strong style="font-size:12px;color:#9a9080;">DESCRIPTION</strong><p style="font-size:14px;color:#5a5245;line-height:1.6;margin:6px 0 0;">${form.description}</p></div>` : ''}
                 ${form.notes ? `<div style="margin-bottom:24px;"><strong style="font-size:12px;color:#9a9080;">AFFILIATE NOTES</strong><p style="font-size:14px;color:#5a5245;line-height:1.6;margin:6px 0 0;">${form.notes}</p></div>` : ''}
                 <div style="text-align:center;">
-                  <a href="https://finitive-finance.vercel.app/dashboard/pipeline"
+                  <a href="https://finitivefinance.app/dashboard/pipeline"
                      style="display:inline-block;background:#c9a84c;color:#fff;font-size:14px;font-weight:600;padding:14px 32px;border-radius:8px;text-decoration:none;">
                     View in CRM →
                   </a>
@@ -119,7 +125,6 @@ export default function SubmitLeadPage() {
         })
       })
     } catch (e) {
-      // Don't block submission if email fails
       console.error('Email notification failed:', e)
     }
 
@@ -257,11 +262,12 @@ export default function SubmitLeadPage() {
                     <label className="block text-xs font-medium text-[#5a5245] mb-1.5">Deal type</label>
                     <select name="deal_type" value={form.deal_type} onChange={handleChange} className="w-full px-3 py-2.5 text-sm rounded-lg border border-black/10 bg-[#f5f3ee] text-[#1a1610] focus:outline-none focus:border-[#c9a84c] focus:bg-white transition-all">
                       <option value="">Select type...</option>
-                      <option>Buyout</option>
-                      <option>Growth equity</option>
-                      <option>Venture</option>
-                      <option>Real estate</option>
-                      <option>Other</option>
+                      <option>Refinance</option>
+                      <option>Purchase</option>
+                      <option>Land + Construction</option>
+                      <option>Land</option>
+                      <option>Construction</option>
+                      <option>Private Lending</option>
                     </select>
                   </div>
                   <div>
@@ -320,16 +326,16 @@ export default function SubmitLeadPage() {
               <div className="bg-green-50 border border-green-100 rounded-xl p-4 mb-4 flex gap-3">
                 <span className="text-green-500 text-lg flex-shrink-0">ℹ</span>
                 <div className="text-sm text-[#5a5245] leading-relaxed">
-                  <strong className="text-[#1a1610]">Commission reminder:</strong> If Finitive Finance closes a deal with this company you will earn <strong className="text-[#18b877]">2% of the total deal value</strong>. You will receive email updates at each stage change.
+                  <strong className="text-[#1a1610]">Commission reminder:</strong> If Finitive Finance closes a deal with this company you will earn <strong className="text-[#18b877]">{(commissionRate * 100).toFixed(1)}% of the total deal value</strong>. You will receive email updates at each stage change.
                 </div>
               </div>
 
               {/* Terms */}
               <div className="text-xs text-center text-[#9a9080] mb-4">
                 By submitting you agree to our{' '}
-                <a href="#" className="text-[#c9a84c] hover:underline">Terms & Conditions</a>
+                <a href="/terms" className="text-[#c9a84c] hover:underline">Terms & Conditions</a>
                 {' '}and{' '}
-                <a href="#" className="text-[#c9a84c] hover:underline">Privacy Policy</a>
+                <a href="/privacy" className="text-[#c9a84c] hover:underline">Privacy Policy</a>
               </div>
 
               {/* Error */}
