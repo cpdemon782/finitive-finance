@@ -133,12 +133,17 @@ export default function LoginPage() {
             className="w-full py-3 bg-[#c9a84c] hover:bg-[#a8863a] text-white text-sm font-semibold rounded-lg shadow-md shadow-[#c9a84c]/20 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {loading ? 'Signing in...' : 'Sign in'}
-          </button>
-          <div className="mt-5 flex items-center justify-center gap-4 text-xs text-[#b0a898]">
-<a href="/privacy" className="hover:text-[#c9a84c] transition-colors">Privacy Policy</a>
-<span>·</span>
-<a href="/terms" className="hover:text-[#c9a84c] transition-colors">Terms & Conditions</a>
-          </div>
+          </button><div className="mt-5 flex items-center justify-center gap-4 text-xs text-[#b0a898]">
+  <a href="/privacy" className="hover:text-[#c9a84c] transition-colors">Privacy Policy</a>
+  <span>·</span>
+  <a href="/terms" className="hover:text-[#c9a84c] transition-colors">Terms & Conditions</a>
+</div>
+<div className="mt-4 pt-4 border-t border-black/5 text-center">
+  <p className="text-xs text-[#9a9080]">Interested in becoming a partner?</p>
+  <a href="/apply" className="text-sm font-medium text-[#c9a84c] hover:text-[#a8863a] transition-colors">
+    Apply to join the affiliate network →
+  </a>
+</div>
         </div>
         <p className="text-center text-xs text-[#c0b8a8] mt-6">
           © 2026 Finitive Finance. All rights reserved.
