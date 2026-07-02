@@ -52,14 +52,15 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#faf9f5] via-[#f0ece0] to-[#e8e0cc]">
       <div className="w-full max-w-md px-5">
 
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <img
-            src="/logo.png"
-            alt="Finitive Finance"
-            style={{ height: '80px', width: 'auto', objectFit: 'contain', margin: '0 auto', display: 'block' }}
-          />
-        </div>
+     tsx{/* Logo */}
+<div className="text-center mb-8">
+  <img
+    src="/logo.png"
+    alt="Finitive Finance"
+    style={{ height: '80px', width: 'auto', objectFit: 'contain', margin: '0 auto', display: 'block' }}
+  />
+  <h1 className="text-2xl font-semibold text-[#1a1610] tracking-tight mt-4">Finitive Finance</h1>
+</div>
 
         <div className="bg-white rounded-2xl p-8 shadow-xl border border-[#c9a84c]/10">
           <div className="flex bg-[#f5f3ee] rounded-lg p-1 gap-1 mb-6 border border-black/5">
