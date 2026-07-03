@@ -12,7 +12,7 @@ interface SidebarProps {
 
 function NavItem({ href, label, active, badge = 0 }: { href: string, label: string, active: boolean, badge?: number }) {
   return (
-    
+<a    
       href={href}
       className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm mb-1 transition-all ${
         active
