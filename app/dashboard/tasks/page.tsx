@@ -71,11 +71,6 @@ export default function TasksPage() {
     setTasks(prev => prev.filter(t => t.id !== taskId))
   }
 
-  async function handleSignOut() {
-    await signOut()
-    router.push('/login')
-  }
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#f5f5f7]">
@@ -101,7 +96,6 @@ export default function TasksPage() {
     const member = getMember(task.assigned_to)
     const isOverdue = !task.completed && task.due_date && new Date(task.due_date) < new Date()
     const isToday = !task.completed && task.due_date && new Date(task.due_date).toDateString() === new Date().toDateString()
-
     return (
       <div className={`flex items-start gap-3 py-3 px-4 border-b border-black/5 last:border-0 hover:bg-[#f5f3ee] transition-all group ${task.completed ? 'opacity-50' : ''}`}>
         <button
@@ -115,32 +109,17 @@ export default function TasksPage() {
             {task.title}
           </div>
           <div className="flex items-center gap-2 mt-1 flex-wrap">
-            {lead && (
-              <span className="text-[10px] bg-[#f5f3ee] text-[#5a5245] px-2 py-0.5 rounded-full border border-black/5">
-                {lead.company_name}
-              </span>
-            )}
-            {member && (
-              <span className="text-[10px] text-[#9a9080]">{member.full_name}</span>
-            )}
+            {lead && <span className="text-[10px] bg-[#f5f3ee] text-[#5a5245] px-2 py-0.5 rounded-full border border-black/5">{lead.company_name}</span>}
+            {member && <span className="text-[10px] text-[#9a9080]">{member.full_name}</span>}
             {task.due_date && (
-              <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
-                isOverdue ? 'bg-red-100 text-red-600' :
-                isToday ? 'bg-amber-100 text-amber-600' :
-                'bg-blue-50 text-blue-600'
-              }`}>
+              <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${isOverdue ? 'bg-red-100 text-red-600' : isToday ? 'bg-amber-100 text-amber-600' : 'bg-blue-50 text-blue-600'}`}>
                 {isOverdue ? 'Overdue · ' : isToday ? 'Today · ' : ''}
                 {new Date(task.due_date).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })}
               </span>
             )}
           </div>
         </div>
-        <button
-          onClick={() => deleteTask(task.id)}
-          className="opacity-0 group-hover:opacity-100 text-[#9a9080] hover:text-red-500 text-sm transition-all flex-shrink-0"
-        >
-          ×
-        </button>
+        <button onClick={() => deleteTask(task.id)} className="opacity-0 group-hover:opacity-100 text-[#9a9080] hover:text-red-500 text-sm transition-all flex-shrink-0">×</button>
       </div>
     )
   }
@@ -151,13 +130,9 @@ export default function TasksPage() {
       <div className="bg-white rounded-xl border border-black/5 shadow-sm overflow-hidden mb-4">
         <div className="px-4 py-3 border-b border-black/5 flex items-center gap-2">
           <div className="text-sm font-semibold text-[#1a1610]">{title}</div>
-          {badge && (
-            <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${badgeColor}`}>{badge}</span>
-          )}
+          {badge && <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${badgeColor}`}>{badge}</span>}
         </div>
-        <div>
-          {tasks.map(task => <TaskCard key={task.id} task={task} />)}
-        </div>
+        <div>{tasks.map(task => <TaskCard key={task.id} task={task} />)}</div>
       </div>
     )
   }
@@ -165,56 +140,20 @@ export default function TasksPage() {
   return (
     <div className="min-h-screen bg-[#f5f5f7] flex">
 
-      {/* Sidebar */}
-   <Sidebar user={user} portal="internal" activePage="tasks" />
-          </div>
-        </div>
-        <nav className="p-2 flex-1">
-          <div className="text-[10px] text-[#c9a84c]/40 font-mono px-2 py-2 tracking-widest">MAIN</div>
-          <a href="/dashboard" className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-white/50 hover:text-white hover:bg-white/5 mb-1">Dashboard</a>
-          <a href="/dashboard/pipeline" className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-white/50 hover:text-white hover:bg-white/5 mb-1">Pipeline</a>
-          <a href="/dashboard/leads" className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-white/50 hover:text-white hover:bg-white/5 mb-1">All Leads</a>
-          <a href="/dashboard/tasks" className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-white bg-[#c9a84c]/15 font-medium mb-1">Tasks</a>
-          <div className="text-[10px] text-[#c9a84c]/40 font-mono px-2 py-2 tracking-widest mt-2">MANAGEMENT</div>
-          <a href="/dashboard/affiliates" className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-white/50 hover:text-white hover:bg-white/5 mb-1">Affiliates</a>
-          <a href="/dashboard/team" className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-white/50 hover:text-white hover:bg-white/5 mb-1">Team</a>
-          <a href="/dashboard/reports" className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-white/50 hover:text-white hover:bg-white/5 mb-1">Reports</a>
-        </nav>
-        <div className="p-3 border-t border-[#c9a84c]/20">
-          <div className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-white/5 cursor-pointer" onClick={handleSignOut}>
-            <div className="w-7 h-7 rounded-full bg-[#c9a84c] flex items-center justify-center text-xs font-bold text-[#1a1610]">
-              {user?.full_name?.split(' ').map((n: string) => n[0]).join('') || 'SN'}
-            </div>
-            <div>
-              <div className="text-xs font-medium text-white">{user?.full_name}</div>
-              <div className="text-[10px] text-white/40">Sign out</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Sidebar user={user} portal="internal" activePage="tasks" />
 
-      {/* Main */}
       <div className="ml-52 flex-1 flex flex-col min-h-screen">
-
-        {/* Topbar */}
         <div className="bg-white border-b border-black/5 px-6 py-3 flex items-center gap-3">
           <div className="flex-1">
             <div className="text-base font-semibold text-[#1a1610]">Tasks</div>
-            <div className="text-xs text-[#9a9080]">
-              {tasks.filter(t => !t.completed).length} open · {completed.length} completed
-            </div>
+            <div className="text-xs text-[#9a9080]">{tasks.filter(t => !t.completed).length} open · {completed.length} completed</div>
           </div>
-          <button
-            onClick={() => setShowNewTask(!showNewTask)}
-            className="px-4 py-2 bg-[#c9a84c] text-white text-sm font-medium rounded-lg hover:bg-[#a8863a] transition-colors"
-          >
+          <button onClick={() => setShowNewTask(!showNewTask)} className="px-4 py-2 bg-[#c9a84c] text-white text-sm font-medium rounded-lg hover:bg-[#a8863a] transition-colors">
             + New Task
           </button>
         </div>
 
         <div className="p-6 max-w-3xl">
-
-          {/* New task form */}
           {showNewTask && (
             <div className="bg-white rounded-xl border border-[#c9a84c]/30 shadow-sm overflow-hidden mb-4">
               <div className="px-4 py-3 border-b border-black/5">
@@ -231,43 +170,19 @@ export default function TasksPage() {
                   autoFocus
                 />
                 <div className="grid grid-cols-3 gap-3">
-                  <select
-                    value={newTask.lead_id}
-                    onChange={e => setNewTask(p => ({ ...p, lead_id: e.target.value }))}
-                    className="px-3 py-2.5 text-sm rounded-lg border border-black/10 bg-[#f5f3ee] text-[#1a1610] focus:outline-none focus:border-[#c9a84c] transition-all"
-                  >
+                  <select value={newTask.lead_id} onChange={e => setNewTask(p => ({ ...p, lead_id: e.target.value }))} className="px-3 py-2.5 text-sm rounded-lg border border-black/10 bg-[#f5f3ee] text-[#1a1610] focus:outline-none focus:border-[#c9a84c] transition-all">
                     <option value="">Link to deal...</option>
                     {leads.map(l => <option key={l.id} value={l.id}>{l.company_name}</option>)}
                   </select>
-                  <select
-                    value={newTask.assigned_to}
-                    onChange={e => setNewTask(p => ({ ...p, assigned_to: e.target.value }))}
-                    className="px-3 py-2.5 text-sm rounded-lg border border-black/10 bg-[#f5f3ee] text-[#1a1610] focus:outline-none focus:border-[#c9a84c] transition-all"
-                  >
+                  <select value={newTask.assigned_to} onChange={e => setNewTask(p => ({ ...p, assigned_to: e.target.value }))} className="px-3 py-2.5 text-sm rounded-lg border border-black/10 bg-[#f5f3ee] text-[#1a1610] focus:outline-none focus:border-[#c9a84c] transition-all">
                     <option value="">Assign to...</option>
                     {teamMembers.map(m => <option key={m.id} value={m.id}>{m.full_name}</option>)}
                   </select>
-                  <input
-                    type="date"
-                    value={newTask.due_date}
-                    onChange={e => setNewTask(p => ({ ...p, due_date: e.target.value }))}
-                    className="px-3 py-2.5 text-sm rounded-lg border border-black/10 bg-[#f5f3ee] text-[#1a1610] focus:outline-none focus:border-[#c9a84c] transition-all"
-                  />
+                  <input type="date" value={newTask.due_date} onChange={e => setNewTask(p => ({ ...p, due_date: e.target.value }))} className="px-3 py-2.5 text-sm rounded-lg border border-black/10 bg-[#f5f3ee] text-[#1a1610] focus:outline-none focus:border-[#c9a84c] transition-all" />
                 </div>
                 <div className="flex gap-2 justify-end">
-                  <button
-                    onClick={() => setShowNewTask(false)}
-                    className="px-4 py-2 text-sm text-[#5a5245] border border-black/10 rounded-lg hover:bg-[#f5f3ee]"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={addTask}
-                    disabled={!newTask.title}
-                    className="px-4 py-2 text-sm bg-[#c9a84c] text-white rounded-lg hover:bg-[#a8863a] disabled:opacity-50"
-                  >
-                    Add task
-                  </button>
+                  <button onClick={() => setShowNewTask(false)} className="px-4 py-2 text-sm text-[#5a5245] border border-black/10 rounded-lg hover:bg-[#f5f3ee]">Cancel</button>
+                  <button onClick={addTask} disabled={!newTask.title} className="px-4 py-2 text-sm bg-[#c9a84c] text-white rounded-lg hover:bg-[#a8863a] disabled:opacity-50">Add task</button>
                 </div>
               </div>
             </div>
@@ -283,12 +198,7 @@ export default function TasksPage() {
               <div className="text-4xl mb-3">✓</div>
               <div className="text-sm font-medium text-[#1a1610] mb-1">All caught up!</div>
               <div className="text-xs text-[#9a9080] mb-4">No open tasks right now</div>
-              <button
-                onClick={() => setShowNewTask(true)}
-                className="px-4 py-2 bg-[#c9a84c] text-white text-sm font-medium rounded-lg hover:bg-[#a8863a]"
-              >
-                + Create a task
-              </button>
+              <button onClick={() => setShowNewTask(true)} className="px-4 py-2 bg-[#c9a84c] text-white text-sm font-medium rounded-lg hover:bg-[#a8863a]">+ Create a task</button>
             </div>
           )}
 
@@ -298,12 +208,9 @@ export default function TasksPage() {
                 <div className="text-sm font-semibold text-[#1a1610]">Completed</div>
                 <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-green-100 text-green-600">{completed.length}</span>
               </div>
-              <div>
-                {completed.map(task => <TaskCard key={task.id} task={task} />)}
-              </div>
+              <div>{completed.map(task => <TaskCard key={task.id} task={task} />)}</div>
             </div>
           )}
-
         </div>
       </div>
     </div>
