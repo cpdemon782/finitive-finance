@@ -66,31 +66,6 @@ export default function CommissionsPage() {
 
       {/* Sidebar */}
       <Sidebar user={user} portal="affiliate" activePage="commissions" />
-          </div>
-        </div>
-        <nav className="p-2 flex-1">
-          <div className="text-[10px] text-[#c9a84c]/40 font-mono px-2 py-2 tracking-widest">MY PORTAL</div>
-          <a href="/affiliate/dashboard" className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-white/50 hover:text-white hover:bg-white/5 mb-1">Dashboard</a>
-          <a href="/affiliate/leads" className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-white/50 hover:text-white hover:bg-white/5 mb-1">My Leads</a>
-          <a href="/affiliate/submit" className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-white/50 hover:text-white hover:bg-white/5 mb-1">Submit Lead</a>
-          <div className="text-[10px] text-[#c9a84c]/40 font-mono px-2 py-2 tracking-widest mt-2">FINANCIALS</div>
-          <a href="/affiliate/commissions" className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-white bg-[#c9a84c]/15 font-medium mb-1">Commissions</a>
-          <div className="text-[10px] text-[#c9a84c]/40 font-mono px-2 py-2 tracking-widest mt-2">ACCOUNT</div>
-          <a href="/affiliate/profile" className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-white/50 hover:text-white hover:bg-white/5 mb-1">My Profile</a>
-          <a href="/affiliate/support" className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-white/50 hover:text-white hover:bg-white/5 mb-1">Support</a>
-        </nav>
-        <div className="p-3 border-t border-[#c9a84c]/20">
-          <div className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-white/5 cursor-pointer" onClick={handleSignOut}>
-            <div className="w-7 h-7 rounded-full bg-[#c9a84c] flex items-center justify-center text-xs font-bold text-[#1a1610]">
-              {user?.full_name?.split(' ').map((n: string) => n[0]).join('') || 'MT'}
-            </div>
-            <div>
-              <div className="text-xs font-medium text-white">{user?.full_name}</div>
-              <div className="text-[10px] text-white/40">Sign out</div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Main */}
       <div className="ml-52 flex-1 flex flex-col min-h-screen">
