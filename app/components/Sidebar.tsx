@@ -11,16 +11,11 @@ interface SidebarProps {
 }
 
 function NavItem({ href, label, active, badge = 0 }: { href: string, label: string, active: boolean, badge?: number }) {
-  const base = 'flex items-center gap-2 px-3 py-2 rounded-md text-sm mb-1 transition-all '
-  const cls = base + (active ? 'text-white bg-[#c9a84c]/15 font-medium' : 'text-white/50 hover:text-white hover:bg-white/5')
+  const cls = 'flex items-center gap-2 px-3 py-2 rounded-md text-sm mb-1 transition-all ' + (active ? 'text-white bg-[#c9a84c]/15 font-medium' : 'text-white/50 hover:text-white hover:bg-white/5')
   return (
     <a href={href} className={cls}>
       {label}
       {badge > 0 && <span className="ml-auto bg-[#c9a84c] text-[#1a1610] text-[10px] font-bold px-1.5 py-0.5 rounded-full">{badge}</span>}
-    </a>
-  )
-}
-      )}
     </a>
   )
 }
@@ -42,13 +37,10 @@ export default function Sidebar({ user, portal, activePage, pendingApplications 
           <div className="w-8 h-8 bg-[#c9a84c] rounded-lg flex items-center justify-center text-xs font-bold text-[#1a1610]">FF</div>
           <div>
             <div className="text-sm font-semibold text-white">Finitive Finance</div>
-            <div className="text-[10px] text-[#c9a84c]/60 font-mono">
-              {portal === 'internal' ? 'DEAL PLATFORM' : 'AFFILIATE PORTAL'}
-            </div>
+            <div className="text-[10px] text-[#c9a84c]/60 font-mono">{portal === 'internal' ? 'DEAL PLATFORM' : 'AFFILIATE PORTAL'}</div>
           </div>
         </div>
       </div>
-
       <nav className="p-2 flex-1 overflow-y-auto">
         {portal === 'internal' ? (
           <>
@@ -77,15 +69,9 @@ export default function Sidebar({ user, portal, activePage, pendingApplications 
           </>
         )}
       </nav>
-
       <div className="p-3 border-t border-[#c9a84c]/20">
-        <div
-          className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-white/5 cursor-pointer"
-          onClick={handleSignOut}
-        >
-          <div className="w-7 h-7 rounded-full bg-[#c9a84c] flex items-center justify-center text-xs font-bold text-[#1a1610]">
-            {initials}
-          </div>
+        <div className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-white/5 cursor-pointer" onClick={handleSignOut}>
+          <div className="w-7 h-7 rounded-full bg-[#c9a84c] flex items-center justify-center text-xs font-bold text-[#1a1610]">{initials}</div>
           <div>
             <div className="text-xs font-medium text-white">{user?.full_name}</div>
             <div className="text-[10px] text-white/40">Sign out</div>
