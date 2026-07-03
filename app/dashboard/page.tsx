@@ -1,9 +1,9 @@
 'use client'
 
-import Sidebar from '../components/Sidebar'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase, getUserRole, signOut } from '../../lib/supabase'
+import Sidebar from '../components/Sidebar'
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -15,28 +15,19 @@ export default function DashboardPage() {
     async function init() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.push('/login'); return }
-
       const profile = await getUserRole(user.id)
       if (!profile) { router.push('/login'); return }
       if (profile.role === 'affiliate') { router.push('/affiliate'); return }
-
       setUser({ ...user, ...profile })
-
       const { data: leadsData } = await supabase
         .from('leads')
         .select('*')
         .order('created_at', { ascending: false })
-
       setLeads(leadsData || [])
       setLoading(false)
     }
     init()
   }, [router])
-
-  async function handleSignOut() {
-    await signOut()
-    router.push('/login')
-  }
 
   if (loading) {
     return (
@@ -54,7 +45,6 @@ export default function DashboardPage() {
   const affiliateLeads = leads.filter(l => l.source === 'affiliate').length
   const closedLeads = leads.filter(l => l.stage === 'Closed').length
 
-  const stageOrder = ['New Lead', 'Reviewing', 'Due Diligence', 'Term Sheet', 'Closed', 'Lost']
   const stageColors: Record<string, string> = {
     'New Lead': 'bg-blue-100 text-blue-700',
     'Reviewing': 'bg-amber-100 text-amber-700',
@@ -67,33 +57,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-[#f5f5f7] flex">
 
-      {/* Sidebar */}
-<Sidebar user={user} portal="internal" activePage="dashboard" />            </div>
-          </div>
-        </div>
-        <nav className="p-2 flex-1">
-          <div className="text-[10px] text-[#c9a84c]/40 font-mono px-2 py-2 tracking-widest">MAIN</div>
-          <a href="/dashboard" className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-white bg-[#c9a84c]/15 font-medium mb-1">Dashboard</a>
-          <a href="/dashboard/pipeline" className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-white/50 hover:text-white hover:bg-white/5 mb-1">Pipeline</a>
-          <a href="/dashboard/leads" className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-white/50 hover:text-white hover:bg-white/5 mb-1">All Leads</a>
-          <a href="/dashboard/tasks" className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-white/50 hover:text-white hover:bg-white/5 mb-1">Tasks</a>
-          <div className="text-[10px] text-[#c9a84c]/40 font-mono px-2 py-2 tracking-widest mt-2">MANAGEMENT</div>
-          <a href="/dashboard/affiliates" className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-white/50 hover:text-white hover:bg-white/5 mb-1">Affiliates</a>
-          <a href="/dashboard/team" className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-white/50 hover:text-white hover:bg-white/5 mb-1">Team</a>
-          <a href="/dashboard/reports" className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-white/50 hover:text-white hover:bg-white/5 mb-1">Reports</a>
-        </nav>
-        <div className="p-3 border-t border-[#c9a84c]/20">
-          <div className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-white/5 cursor-pointer" onClick={handleSignOut}>
-            <div className="w-7 h-7 rounded-full bg-[#c9a84c] flex items-center justify-center text-xs font-bold text-[#1a1610]">
-              {user?.full_name?.split(' ').map((n: string) => n[0]).join('') || 'SN'}
-            </div>
-            <div>
-              <div className="text-xs font-medium text-white">{user?.full_name}</div>
-              <div className="text-[10px] text-white/40">Sign out</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Sidebar user={user} portal="internal" activePage="dashboard" />
 
       {/* Main content */}
       <div className="ml-52 flex-1 flex flex-col min-h-screen">
@@ -171,7 +135,6 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* Recent activity */}
             <div className="bg-white rounded-xl border border-black/5 shadow-sm overflow-hidden">
               <div className="px-5 py-4 border-b border-black/5">
                 <div className="text-sm font-semibold text-[#1a1610]">Recent leads</div>
@@ -192,7 +155,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Recent leads table */}
+          {/* All leads table */}
           <div className="bg-white rounded-xl border border-black/5 shadow-sm overflow-hidden">
             <div className="px-5 py-4 border-b border-black/5 flex items-center justify-between">
               <div className="text-sm font-semibold text-[#1a1610]">All leads</div>
