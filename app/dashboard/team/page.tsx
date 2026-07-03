@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase, getUserRole, signOut } from '../../../lib/supabase'
+import { supabase, getUserRole } from '../../../lib/supabase'
+import Sidebar from '../../components/Sidebar'
 
 export default function TeamPage() {
   const router = useRouter()
@@ -30,11 +31,6 @@ export default function TeamPage() {
     init()
   }, [router])
 
-  async function handleSignOut() {
-    await signOut()
-    router.push('/login')
-  }
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#f5f5f7]">
@@ -59,42 +55,8 @@ export default function TeamPage() {
   return (
     <div className="min-h-screen bg-[#f5f5f7] flex">
 
-      {/* Sidebar */}
-      <div className="w-52 bg-[#1a1610] flex flex-col flex-shrink-0 fixed h-full">
-        <div className="p-4 border-b border-[#c9a84c]/20">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-[#c9a84c] rounded-lg flex items-center justify-center text-xs font-bold text-[#1a1610]">FF</div>
-            <div>
-              <div className="text-sm font-semibold text-white">Finitive Finance</div>
-              <div className="text-[10px] text-[#c9a84c]/60 font-mono">DEAL PLATFORM</div>
-            </div>
-          </div>
-        </div>
-        <nav className="p-2 flex-1">
-          <div className="text-[10px] text-[#c9a84c]/40 font-mono px-2 py-2 tracking-widest">MAIN</div>
-          <a href="/dashboard" className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-white/50 hover:text-white hover:bg-white/5 mb-1">Dashboard</a>
-          <a href="/dashboard/pipeline" className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-white/50 hover:text-white hover:bg-white/5 mb-1">Pipeline</a>
-          <a href="/dashboard/leads" className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-white/50 hover:text-white hover:bg-white/5 mb-1">All Leads</a>
-          <a href="/dashboard/tasks" className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-white/50 hover:text-white hover:bg-white/5 mb-1">Tasks</a>
-          <div className="text-[10px] text-[#c9a84c]/40 font-mono px-2 py-2 tracking-widest mt-2">MANAGEMENT</div>
-          <a href="/dashboard/affiliates" className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-white/50 hover:text-white hover:bg-white/5 mb-1">Affiliates</a>
-          <a href="/dashboard/team" className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-white bg-[#c9a84c]/15 font-medium mb-1">Team</a>
-          <a href="/dashboard/reports" className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-white/50 hover:text-white hover:bg-white/5 mb-1">Reports</a>
-        </nav>
-        <div className="p-3 border-t border-[#c9a84c]/20">
-          <div className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-white/5 cursor-pointer" onClick={handleSignOut}>
-            <div className="w-7 h-7 rounded-full bg-[#c9a84c] flex items-center justify-center text-xs font-bold text-[#1a1610]">
-              {getInitials(user?.full_name)}
-            </div>
-            <div>
-              <div className="text-xs font-medium text-white">{user?.full_name}</div>
-              <div className="text-[10px] text-white/40">Sign out</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Sidebar user={user} portal="internal" activePage="team" />
 
-      {/* Main */}
       <div className="ml-52 flex-1 flex flex-col min-h-screen">
         <div className="bg-white border-b border-black/5 px-6 py-3 flex items-center justify-between">
           <div>
@@ -105,7 +67,6 @@ export default function TeamPage() {
 
         <div className="p-6">
 
-          {/* KPI strip */}
           <div className="grid grid-cols-3 gap-4 mb-6">
             <div className="bg-white rounded-xl p-4 border border-black/5 shadow-sm">
               <div className="text-[10px] font-mono text-[#9a9080] mb-1">TEAM MEMBERS</div>
@@ -123,7 +84,6 @@ export default function TeamPage() {
             </div>
           </div>
 
-          {/* Team grid */}
           <div className="grid grid-cols-2 gap-4">
             {team.map((member, i) => {
               const memberLeads = getMemberLeads(member.id)
@@ -149,7 +109,6 @@ export default function TeamPage() {
                     </div>
                   </div>
 
-                  {/* Capacity bar */}
                   <div className="mb-4">
                     <div className="flex items-center justify-between mb-1.5">
                       <span className="text-[10px] font-mono text-[#9a9080]">CAPACITY</span>
@@ -166,7 +125,6 @@ export default function TeamPage() {
                     </div>
                   </div>
 
-                  {/* Their deals */}
                   {memberLeads.length > 0 && (
                     <div className="space-y-1.5">
                       {memberLeads.slice(0, 3).map(lead => (
