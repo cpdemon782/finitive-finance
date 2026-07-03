@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase, getUserRole, signOut } from '../../../lib/supabase'
+import Sidebar from '../../components/Sidebar'
 
 const stageColors: Record<string, string> = {
   'New Lead': 'bg-blue-100 text-blue-700',
@@ -83,14 +84,7 @@ export default function AllLeadsPage() {
     <div className="min-h-screen bg-[#f5f5f7] flex">
 
       {/* Sidebar */}
-      <div className="w-52 bg-[#1a1610] flex flex-col flex-shrink-0 fixed h-full">
-        <div className="p-4 border-b border-[#c9a84c]/20">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-[#c9a84c] rounded-lg flex items-center justify-center text-xs font-bold text-[#1a1610]">FF</div>
-            <div>
-              <div className="text-sm font-semibold text-white">Finitive Finance</div>
-              <div className="text-[10px] text-[#c9a84c]/60 font-mono">DEAL PLATFORM</div>
-            </div>
+   <Sidebar user={user} portal="internal" activePage="leads" />
           </div>
         </div>
         <nav className="p-2 flex-1">
