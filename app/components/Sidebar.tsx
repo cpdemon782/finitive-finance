@@ -8,6 +8,8 @@ interface SidebarProps {
   portal: 'internal' | 'affiliate'
   activePage: string
   pendingApplications?: number
+}
+
 function NavItem({ href, label, active, badge = 0 }: { href: string, label: string, active: boolean, badge?: number }) {
   const base = 'flex items-center gap-2 px-3 py-2 rounded-md text-sm mb-1 transition-all '
   const cls = base + (active ? 'text-white bg-[#c9a84c]/15 font-medium' : 'text-white/50 hover:text-white hover:bg-white/5')
