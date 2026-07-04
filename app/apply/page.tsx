@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { supabase } from '../../lib/supabase'
+import { applicationEmail } from '../../lib/emails'
 
 export default function ApplyPage() {
   const [submitting, setSubmitting] = useState(false)
@@ -29,7 +30,6 @@ export default function ApplyPage() {
     setSubmitting(true)
     setError('')
 
-    // Save application to database
     const { data, error: insertError } = await supabase
       .from('applications')
       .insert({
@@ -50,51 +50,24 @@ export default function ApplyPage() {
       return
     }
 
-    // Notify Simon with approve button
     try {
+      const { subject, html } = applicationEmail({
+        applicantName: form.full_name,
+        applicantEmail: form.email,
+        companyName: form.company_name,
+        phone: form.phone,
+        howHeard: form.how_heard,
+        bio: form.bio,
+        applicationId: data.id,
+      })
+
       await fetch('/api/send-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           to: 'simon@clesandco.com.au',
-          subject: `New affiliate application — ${form.full_name}`,
-          html: `
-            <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:40px 20px;">
-              <div style="background:#1a1610;padding:24px;border-radius:12px 12px 0 0;text-align:center;">
-                <div style="color:#c9a84c;font-size:20px;font-weight:700;">Finitive Finance</div>
-                <div style="color:#ffffff;font-size:12px;margin-top:4px;opacity:0.6;">NEW AFFILIATE APPLICATION</div>
-              </div>
-              <div style="background:#ffffff;padding:32px;border:1px solid #e8e4db;border-top:none;">
-                <p style="color:#1a1610;font-size:18px;font-weight:600;margin:0 0 20px;">New partner application received</p>
-                <div style="background:#f5f3ee;border-radius:12px;padding:20px 24px;margin-bottom:24px;">
-                  <div style="font-size:18px;font-weight:600;color:#1a1610;margin-bottom:4px;">${form.full_name}</div>
-                  <div style="font-size:13px;color:#9a9080;margin-bottom:12px;">${form.company_name}</div>
-                  <div style="font-size:13px;color:#5a5245;margin-bottom:4px;"><strong>Email:</strong> ${form.email}</div>
-                  ${form.phone ? `<div style="font-size:13px;color:#5a5245;margin-bottom:4px;"><strong>Phone:</strong> ${form.phone}</div>` : ''}
-                  ${form.how_heard ? `<div style="font-size:13px;color:#5a5245;margin-bottom:4px;"><strong>How they heard:</strong> ${form.how_heard}</div>` : ''}
-                  ${form.bio ? `<div style="font-size:13px;color:#5a5245;margin-top:12px;"><strong>About:</strong><br>${form.bio}</div>` : ''}
-                </div>
-                <p style="color:#5a5245;font-size:14px;line-height:1.6;margin:0 0 24px;">
-                  Click below to approve this application. This will automatically create their account and send them a welcome email with login instructions.
-                </p>
-                <div style="text-align:center;margin-bottom:16px;">
-                  <a href="https://finitivefinance.app/api/approve-affiliate?id=${data.id}"
-                     style="display:inline-block;background:#18b877;color:#fff;font-size:15px;font-weight:700;padding:16px 40px;border-radius:8px;text-decoration:none;">
-                    ✓ Approve Application
-                  </a>
-                </div>
-                <div style="text-align:center;">
-                  <a href="https://finitivefinance.app/dashboard/applications"
-                     style="display:inline-block;background:#f5f3ee;color:#5a5245;font-size:13px;font-weight:500;padding:10px 24px;border-radius:8px;text-decoration:none;">
-                    View in dashboard
-                  </a>
-                </div>
-              </div>
-              <div style="background:#f5f3ee;padding:16px;border-radius:0 0 12px 12px;text-align:center;border:1px solid #e8e4db;border-top:none;">
-                <p style="color:#9a9080;font-size:12px;margin:0;">© 2026 Finitive Finance. All rights reserved.</p>
-              </div>
-            </div>
-          `
+          subject,
+          html,
         })
       })
     } catch (e) {
@@ -109,7 +82,6 @@ export default function ApplyPage() {
     <div className="min-h-screen bg-gradient-to-br from-[#faf9f5] via-[#f0ece0] to-[#e8e0cc] flex items-center justify-center py-12 px-5">
       <div className="w-full max-w-lg">
 
-        {/* Header */}
         <div className="text-center mb-8">
           <div className="w-12 h-12 bg-[#1a1610] rounded-xl flex items-center justify-center mx-auto mb-4">
             <span className="text-[#c9a84c] font-bold text-sm">FF</span>
@@ -134,7 +106,6 @@ export default function ApplyPage() {
         ) : (
           <div className="bg-white rounded-2xl p-8 shadow-xl border border-[#c9a84c]/10">
 
-            {/* Commission highlight */}
             <div className="bg-gradient-to-r from-[#1a1610] to-[#2a2418] rounded-xl p-4 mb-6 flex items-center gap-3">
               <div className="w-10 h-10 bg-[#c9a84c]/20 rounded-lg flex items-center justify-center flex-shrink-0">
                 <span className="text-[#c9a84c] text-lg">💰</span>
@@ -146,7 +117,6 @@ export default function ApplyPage() {
             </div>
 
             <div className="flex flex-col gap-4">
-
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-medium text-[#5a5245] mb-1.5">Full name *</label>
@@ -207,7 +177,6 @@ export default function ApplyPage() {
                 {' '}and{' '}
                 <a href="/privacy" className="text-[#c9a84c] hover:underline">Privacy Policy</a>
               </div>
-
             </div>
           </div>
         )}
