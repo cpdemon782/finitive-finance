@@ -8,8 +8,8 @@ export async function POST(request: Request) {
     const { to, subject, html } = await request.json()
 
     const { data, error } = await resend.emails.send({
-from: 'Finitive Finance <notifications@finitivefinance.app>',
-      to: 'info@finitivefinance.com.au',
+      from: 'Finitive Finance <onboarding@resend.dev>',
+      to,
       subject,
       html,
     })
