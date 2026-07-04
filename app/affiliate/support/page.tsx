@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase, getUserRole, signOut } from '../../../lib/supabase'
 import Sidebar from '../../components/Sidebar'
+import { supportEmail } from '../../../lib/emails'
 
 export default function SupportPage() {
   const router = useRouter()
@@ -33,38 +34,20 @@ export default function SupportPage() {
     if (!form.subject || !form.message) return
     setSending(true)
     try {
+      const { subject, html } = supportEmail({
+        affiliateName: user.full_name,
+        affiliateEmail: user.email,
+        subject: form.subject,
+        message: form.message,
+      })
+
       await fetch('/api/send-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           to: 'simon@clesandco.com.au',
-          subject: `Affiliate support request — ${form.subject}`,
-          html: `
-            <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:40px 20px;">
-              <div style="background:#1a1610;padding:24px;border-radius:12px 12px 0 0;text-align:center;">
-                <div style="color:#c9a84c;font-size:20px;font-weight:700;">Finitive Finance</div>
-                <div style="color:#ffffff;font-size:12px;margin-top:4px;opacity:0.6;">AFFILIATE SUPPORT REQUEST</div>
-              </div>
-              <div style="background:#ffffff;padding:32px;border:1px solid #e8e4db;border-top:none;">
-                <p style="color:#1a1610;font-size:18px;font-weight:600;margin:0 0 16px;">Support request from ${user.full_name}</p>
-                <div style="background:#f5f3ee;border-radius:8px;padding:16px;margin-bottom:16px;">
-                  <p style="font-size:12px;color:#9a9080;margin:0 0 4px;">FROM</p>
-                  <p style="font-size:14px;color:#1a1610;margin:0;">${user.full_name} — ${user.email}</p>
-                </div>
-                <div style="background:#f5f3ee;border-radius:8px;padding:16px;margin-bottom:16px;">
-                  <p style="font-size:12px;color:#9a9080;margin:0 0 4px;">SUBJECT</p>
-                  <p style="font-size:14px;color:#1a1610;margin:0;">${form.subject}</p>
-                </div>
-                <div style="background:#f5f3ee;border-radius:8px;padding:16px;">
-                  <p style="font-size:12px;color:#9a9080;margin:0 0 4px;">MESSAGE</p>
-                  <p style="font-size:14px;color:#1a1610;margin:0;line-height:1.6;">${form.message}</p>
-                </div>
-              </div>
-              <div style="background:#f5f3ee;padding:16px;border-radius:0 0 12px 12px;text-align:center;border:1px solid #e8e4db;border-top:none;">
-                <p style="color:#9a9080;font-size:12px;margin:0;">© 2026 Finitive Finance. All rights reserved.</p>
-              </div>
-            </div>
-          `
+          subject,
+          html,
         })
       })
       setSent(true)
@@ -73,11 +56,6 @@ export default function SupportPage() {
       console.error('Failed to send:', e)
     }
     setSending(false)
-  }
-
-  async function handleSignOut() {
-    await signOut()
-    router.push('/login')
   }
 
   if (loading) {
@@ -94,10 +72,8 @@ export default function SupportPage() {
   return (
     <div className="min-h-screen bg-[#f5f5f7] flex">
 
-      {/* Sidebar */}
       <Sidebar user={user} portal="affiliate" activePage="support" />
 
-      {/* Main */}
       <div className="ml-52 flex-1 flex flex-col min-h-screen">
         <div className="bg-white border-b border-black/5 px-6 py-3">
           <div className="text-base font-semibold text-[#1a1610]">Support</div>
@@ -106,7 +82,6 @@ export default function SupportPage() {
 
         <div className="p-6 max-w-2xl">
 
-          {/* Contact cards */}
           <div className="grid grid-cols-2 gap-4 mb-6">
             <div className="bg-white rounded-xl border border-black/5 shadow-sm p-4 flex items-center gap-3">
               <div className="w-10 h-10 bg-[#c9a84c]/10 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -114,8 +89,8 @@ export default function SupportPage() {
               </div>
               <div>
                 <div className="text-sm font-semibold text-[#1a1610]">Email us</div>
-                <a href="mailto:affiliates@finitivefinance.app" className="text-xs text-[#c9a84c] hover:text-[#a8863a]">
-                  affiliates@finitivefinance.app
+                <a href="mailto:info@finitivefinance.com.au" className="text-xs text-[#c9a84c] hover:text-[#a8863a]">
+                  info@finitivefinance.com.au
                 </a>
               </div>
             </div>
@@ -130,7 +105,6 @@ export default function SupportPage() {
             </div>
           </div>
 
-          {/* Message form */}
           <div className="bg-white rounded-xl border border-black/5 shadow-sm overflow-hidden mb-4">
             <div className="px-5 py-4 border-b border-black/5">
               <div className="text-sm font-semibold text-[#1a1610]">Send a message</div>
@@ -144,10 +118,7 @@ export default function SupportPage() {
                   </div>
                   <div className="text-sm font-semibold text-[#1a1610] mb-1">Message sent!</div>
                   <div className="text-xs text-[#9a9080] mb-4">We'll get back to you within 1 business day.</div>
-                  <button
-                    onClick={() => setSent(false)}
-                    className="text-xs text-[#c9a84c] hover:text-[#a8863a]"
-                  >
+                  <button onClick={() => setSent(false)} className="text-xs text-[#c9a84c] hover:text-[#a8863a]">
                     Send another message
                   </button>
                 </div>
@@ -184,33 +155,17 @@ export default function SupportPage() {
             </div>
           </div>
 
-          {/* FAQ */}
           <div className="bg-white rounded-xl border border-black/5 shadow-sm overflow-hidden">
             <div className="px-5 py-4 border-b border-black/5">
               <div className="text-sm font-semibold text-[#1a1610]">Frequently asked questions</div>
             </div>
             <div className="divide-y divide-black/5">
               {[
-                {
-                  q: 'When do I get paid my commission?',
-                  a: 'Commission payments are processed within 30 days of a deal closing. You will receive an email notification when your payment is being processed.'
-                },
-                {
-                  q: 'How is my commission calculated?',
-                  a: 'Your commission is calculated as a percentage of the total closed deal value. Your individual rate is shown on your profile page and commissions page.'
-                },
-                {
-                  q: 'Can I submit multiple leads?',
-                  a: 'Yes — you can submit as many referrals as you like. Each lead is evaluated independently by the Finitive Finance team.'
-                },
-                {
-                  q: 'How long does it take to hear back on a lead?',
-                  a: 'Our team typically reviews new leads within 2–3 business days. You will receive email updates at each stage change.'
-                },
-                {
-                  q: 'What happens if a lead doesn\'t progress?',
-                  a: 'If a lead does not meet our current investment criteria, you will be notified by email with a brief explanation. No commission is payable on leads that do not close.'
-                },
+                { q: 'When do I get paid my commission?', a: 'Commission payments are processed within 30 days of a deal closing. You will receive an email notification when your payment is being processed.' },
+                { q: 'How is my commission calculated?', a: 'Your commission is calculated as a percentage of the total closed deal value. Your individual rate is shown on your profile page and commissions page.' },
+                { q: 'Can I submit multiple leads?', a: 'Yes — you can submit as many referrals as you like. Each lead is evaluated independently by the Finitive Finance team.' },
+                { q: 'How long does it take to hear back on a lead?', a: 'Our team typically reviews new leads within 2–3 business days. You will receive email updates at each stage change.' },
+                { q: "What happens if a lead doesn't progress?", a: "If a lead does not meet our current investment criteria, you will be notified by email with a brief explanation. No commission is payable on leads that do not close." },
               ].map((faq, i) => (
                 <div key={i} className="px-5 py-4">
                   <div className="text-sm font-medium text-[#1a1610] mb-1">{faq.q}</div>
