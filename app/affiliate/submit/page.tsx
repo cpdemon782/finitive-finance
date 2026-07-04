@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase, getUserRole, signOut } from '../../../lib/supabase'
 import Sidebar from '../../components/Sidebar'
+import { newLeadEmail } from '../../../lib/emails'
 
 export default function SubmitLeadPage() {
   const router = useRouter()
@@ -87,42 +88,26 @@ export default function SubmitLeadPage() {
     }
 
     try {
+      const { subject, html } = newLeadEmail({
+        affiliateName: user.full_name,
+        companyName: form.company_name,
+        sector: form.sector,
+        dealType: form.deal_type,
+        dealSizeMax: form.deal_size_max ? parseFloat(form.deal_size_max) * 1000000 : 0,
+        contactName: form.contact_name,
+        contactEmail: form.contact_email,
+        contactPhone: form.contact_phone,
+        description: form.description,
+        notes: form.notes,
+      })
+
       await fetch('/api/send-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           to: 'simon@clesandco.com.au',
-          subject: `New lead submitted — ${form.company_name}`,
-          html: `
-            <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:40px 20px;">
-              <div style="background:#1a1610;padding:24px;border-radius:12px 12px 0 0;text-align:center;">
-                <div style="color:#c9a84c;font-size:20px;font-weight:700;">Finitive Finance</div>
-                <div style="color:#ffffff;font-size:12px;margin-top:4px;opacity:0.6;">NEW LEAD SUBMITTED</div>
-              </div>
-              <div style="background:#ffffff;padding:32px;border:1px solid #e8e4db;border-top:none;">
-                <p style="color:#1a1610;font-size:20px;font-weight:600;margin:0 0 20px;">New referral from ${user.full_name}</p>
-                <div style="background:#f5f3ee;border-radius:12px;padding:20px 24px;margin-bottom:24px;">
-                  <div style="font-size:18px;font-weight:600;color:#1a1610;margin-bottom:4px;">${form.company_name}</div>
-                  <div style="font-size:13px;color:#9a9080;margin-bottom:8px;">${form.sector} · ${form.deal_type}</div>
-                  <div style="font-size:22px;font-weight:700;color:#c9a84c;margin-bottom:12px;">$${form.deal_size_max}M</div>
-                  <div style="font-size:13px;color:#5a5245;margin-bottom:4px;"><strong>Contact:</strong> ${form.contact_name}</div>
-                  <div style="font-size:13px;color:#5a5245;margin-bottom:4px;"><strong>Email:</strong> ${form.contact_email}</div>
-                  ${form.contact_phone ? `<div style="font-size:13px;color:#5a5245;"><strong>Phone:</strong> ${form.contact_phone}</div>` : ''}
-                </div>
-                ${form.description ? `<div style="margin-bottom:16px;"><strong style="font-size:12px;color:#9a9080;">DESCRIPTION</strong><p style="font-size:14px;color:#5a5245;line-height:1.6;margin:6px 0 0;">${form.description}</p></div>` : ''}
-                ${form.notes ? `<div style="margin-bottom:24px;"><strong style="font-size:12px;color:#9a9080;">AFFILIATE NOTES</strong><p style="font-size:14px;color:#5a5245;line-height:1.6;margin:6px 0 0;">${form.notes}</p></div>` : ''}
-                <div style="text-align:center;">
-                  <a href="https://finitivefinance.app/dashboard/pipeline"
-                     style="display:inline-block;background:#c9a84c;color:#fff;font-size:14px;font-weight:600;padding:14px 32px;border-radius:8px;text-decoration:none;">
-                    View in CRM →
-                  </a>
-                </div>
-              </div>
-              <div style="background:#f5f3ee;padding:16px;border-radius:0 0 12px 12px;text-align:center;border:1px solid #e8e4db;border-top:none;">
-                <p style="color:#9a9080;font-size:12px;margin:0;">© 2026 Finitive Finance. All rights reserved.</p>
-              </div>
-            </div>
-          `
+          subject,
+          html,
         })
       })
     } catch (e) {
@@ -131,11 +116,6 @@ export default function SubmitLeadPage() {
 
     setSubmitted(true)
     setSubmitting(false)
-  }
-
-  async function handleSignOut() {
-    await signOut()
-    router.push('/login')
   }
 
   if (loading) {
@@ -152,29 +132,20 @@ export default function SubmitLeadPage() {
   return (
     <div className="min-h-screen bg-[#f5f5f7] flex">
 
-      {/* Sidebar */}
       <Sidebar user={user} portal="affiliate" activePage="submit" />
 
-      {/* Main */}
       <div className="ml-52 flex-1 flex flex-col min-h-screen">
-
-        {/* Topbar */}
         <div className="bg-white border-b border-black/5 px-6 py-3 flex items-center justify-between">
           <div>
             <div className="text-base font-semibold text-[#1a1610]">Submit a Lead</div>
             <div className="text-xs text-[#9a9080]">Refer a company to Finitive Finance</div>
           </div>
-          <button
-            onClick={() => router.push('/affiliate/dashboard')}
-            className="px-4 py-2 border border-black/10 text-[#5a5245] text-sm font-medium rounded-lg hover:bg-[#f5f3ee] transition-colors"
-          >
+          <button onClick={() => router.push('/affiliate/dashboard')} className="px-4 py-2 border border-black/10 text-[#5a5245] text-sm font-medium rounded-lg hover:bg-[#f5f3ee] transition-colors">
             ← Back to dashboard
           </button>
         </div>
 
         <div className="p-6 max-w-2xl">
-
-          {/* Success state */}
           {submitted ? (
             <div className="bg-white rounded-xl border border-black/5 shadow-sm p-10 text-center">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -191,10 +162,7 @@ export default function SubmitLeadPage() {
                 >
                   Submit another
                 </button>
-                <button
-                  onClick={() => router.push('/affiliate/dashboard')}
-                  className="px-5 py-2.5 bg-[#c9a84c] text-white text-sm font-medium rounded-lg hover:bg-[#a8863a]"
-                >
+                <button onClick={() => router.push('/affiliate/dashboard')} className="px-5 py-2.5 bg-[#c9a84c] text-white text-sm font-medium rounded-lg hover:bg-[#a8863a]">
                   View my leads →
                 </button>
               </div>
@@ -252,7 +220,7 @@ export default function SubmitLeadPage() {
                     <input name="website" value={form.website} onChange={handleChange} placeholder="https://" className="w-full px-3 py-2.5 text-sm rounded-lg border border-black/10 bg-[#f5f3ee] text-[#1a1610] placeholder-[#b0a898] focus:outline-none focus:border-[#c9a84c] focus:bg-white transition-all" />
                   </div>
                   <div className="col-span-2">
-                    <label className="block text-xs font-medium text-[#5a5245] mb-1.5">Company description *</label>
+                    <label className="block text-xs font-medium text-[#5a5245] mb-1.5">Company description</label>
                     <textarea name="description" value={form.description} onChange={handleChange} placeholder="Brief overview of the business and why it's a strong opportunity..." rows={3} className="w-full px-3 py-2.5 text-sm rounded-lg border border-black/10 bg-[#f5f3ee] text-[#1a1610] placeholder-[#b0a898] focus:outline-none focus:border-[#c9a84c] focus:bg-white transition-all resize-none" />
                   </div>
                 </div>
@@ -307,19 +275,14 @@ export default function SubmitLeadPage() {
                 <a href="/privacy" className="text-[#c9a84c] hover:underline">Privacy Policy</a>
               </div>
 
-              {/* Error */}
               {error && (
                 <div className="mb-4 px-4 py-3 bg-red-50 border border-red-100 rounded-lg text-sm text-red-600">
                   {error}
                 </div>
               )}
 
-              {/* Submit */}
               <div className="flex gap-3">
-                <button
-                  onClick={() => router.push('/affiliate/dashboard')}
-                  className="px-5 py-3 border border-black/10 text-[#5a5245] text-sm font-medium rounded-lg hover:bg-[#f5f3ee]"
-                >
+                <button onClick={() => router.push('/affiliate/dashboard')} className="px-5 py-3 border border-black/10 text-[#5a5245] text-sm font-medium rounded-lg hover:bg-[#f5f3ee]">
                   Cancel
                 </button>
                 <button
