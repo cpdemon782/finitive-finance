@@ -4,6 +4,7 @@ import Sidebar from '../../components/Sidebar'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase, getUserRole, signOut } from '../../../lib/supabase'
+import { stageChangeEmail } from '../../lib/emails'
 
 const STAGES = ['New Lead', 'Reviewing', 'Due Diligence', 'Term Sheet', 'Closed', 'Lost']
 
@@ -84,55 +85,24 @@ export default function PipelinePage() {
             .single()
 
           if (affiliateData) {
-            const dealValue = lead.deal_size_max || 0
-            const commissionValue = dealValue * 0.02
+            
+const { subject, html } = stageChangeEmail({
+  affiliateName: affiliateData.full_name,
+  companyName: lead.company_name,
+  newStage,
+  dealSizeMax: lead.deal_size_max || 0,
+  commissionRate: 0.02,
+})
 
-            const res = await fetch('/api/send-email', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                to: affiliateData.email,
-                subject: `Update on your referral — ${lead.company_name}`,
-                html: `
-                  <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:40px 20px;">
-                    <div style="background:#1a1610;padding:24px;border-radius:12px 12px 0 0;text-align:center;">
-                      <div style="color:#c9a84c;font-size:20px;font-weight:700;">Finitive Finance</div>
-                      <div style="color:#ffffff;font-size:12px;margin-top:4px;opacity:0.6;">DEAL PLATFORM</div>
-                    </div>
-                    <div style="background:#ffffff;padding:32px;border:1px solid #e8e4db;border-top:none;">
-                      <p style="color:#5a5245;font-size:15px;margin:0 0 8px;">Hi ${affiliateData.full_name},</p>
-                      <p style="color:#1a1610;font-size:22px;font-weight:600;margin:0 0 24px;">Your referral has been updated</p>
-                      <div style="background:#f5f3ee;border-radius:12px;padding:20px 24px;margin-bottom:24px;">
-                        <div style="font-size:18px;font-weight:600;color:#1a1610;margin-bottom:4px;">${lead.company_name}</div>
-                        <div style="font-size:13px;color:#9a9080;margin-bottom:16px;">Deal value: $${(dealValue/1000000).toFixed(0)}M</div>
-                        <div style="margin-bottom:8px;">
-                          <span style="font-size:11px;color:#9a9080;">NEW STAGE: </span>
-                          <span style="background:#c9a84c;color:#fff;font-size:12px;font-weight:600;padding:3px 10px;border-radius:20px;">${newStage}</span>
-                        </div>
-                        <div>
-                          <span style="font-size:11px;color:#9a9080;">EST. COMMISSION: </span>
-                          <span style="font-size:16px;font-weight:700;color:#18b877;">$${(commissionValue/1000000).toFixed(1)}M</span>
-                        </div>
-                      </div>
-                      <p style="color:#5a5245;font-size:14px;line-height:1.6;margin:0 0 24px;">
-                        The Finitive Finance team has moved your referral <strong>${lead.company_name}</strong> to <strong>${newStage}</strong>.
-                        Log in to your affiliate portal to track the full progress.
-                      </p>
-                      <div style="text-align:center;margin-bottom:24px;">
-                        <a href="https://finitive-finance.vercel.app/affiliate"
-                           style="display:inline-block;background:#c9a84c;color:#fff;font-size:14px;font-weight:600;padding:14px 32px;border-radius:8px;text-decoration:none;">
-                          View in portal →
-                        </a>
-                      </div>
-                      <p style="color:#9a9080;font-size:13px;">Questions? Contact us at <a href="mailto:affiliates@finitivefinance.com" style="color:#c9a84c;">affiliates@finitivefinance.com</a></p>
-                    </div>
-                    <div style="background:#f5f3ee;padding:16px;border-radius:0 0 12px 12px;text-align:center;border:1px solid #e8e4db;border-top:none;">
-                      <p style="color:#9a9080;font-size:12px;margin:0;">© 2026 Finitive Finance. All rights reserved.</p>
-                    </div>
-                  </div>
-                `
-              })
-            })
+const res = await fetch('/api/send-email', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    to: affiliateData.email,
+    subject,
+    html,
+  })
+})
 
             if (res.ok) {
               setEmailStatus('✓ Affiliate notified by email')
