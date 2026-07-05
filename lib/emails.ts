@@ -2,7 +2,7 @@
 // Finitive Finance — Centralised Email Templates
 // ─────────────────────────────────────────────
 
-const LOGO_URL = 'https://finitivefinance.app/logo.jpeg'
+const LOGO_URL = 'https://finitivefinance.app/logo.png'
 const PLATFORM_URL = 'https://finitivefinance.app'
 const SUPPORT_EMAIL = 'info@finitivefinance.com.au'
 const INVITER_NAME = 'Simon'
