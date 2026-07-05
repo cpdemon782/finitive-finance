@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase, getUserRole, signOut } from '../../../lib/supabase'
 import Sidebar from '../../components/Sidebar'
-import { inviteEmail } from '../../lib/emails'
+import { inviteEmail } from '../../../lib/emails'
 
 export default function AffiliatesPage() {
   const router = useRouter()
