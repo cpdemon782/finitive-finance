@@ -4,7 +4,7 @@ import Sidebar from '../../components/Sidebar'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase, getUserRole, signOut } from '../../../lib/supabase'
-import { stageChangeEmail } from '../../lib/emails'
+import { stageChangeEmail } from '../../../lib/emails'
 
 const STAGES = ['New Lead', 'Reviewing', 'Due Diligence', 'Term Sheet', 'Closed', 'Lost']
 
