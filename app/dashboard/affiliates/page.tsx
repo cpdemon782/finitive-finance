@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase, getUserRole, signOut } from '../../../lib/supabase'
 import Sidebar from '../../components/Sidebar'
-import { inviteEmail } from '../../../lib/emails'
+import { inviteEmail as inviteEmailTemplate } from '../../../lib/emails'
 
 export default function AffiliatesPage() {
   const router = useRouter()
@@ -74,7 +74,7 @@ export default function AffiliatesPage() {
     if (!inviteEmail || !inviteName) return
     setInviting(true)
     try {
-     const { subject, html } = inviteEmail({
+const { subject, html } = inviteEmailTemplate({
   inviteeName: inviteName,
   commissionRate: 0.02,
 })
