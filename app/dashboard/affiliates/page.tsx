@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase, getUserRole, signOut } from '../../../lib/supabase'
 import Sidebar from '../../components/Sidebar'
+import { inviteEmail } from '../../lib/emails'
 
 export default function AffiliatesPage() {
   const router = useRouter()
@@ -73,36 +74,20 @@ export default function AffiliatesPage() {
     if (!inviteEmail || !inviteName) return
     setInviting(true)
     try {
-      await fetch('/api/send-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          to: 'simon@clesandco.com.au',
-          subject: `Affiliate invitation — ${inviteName}`,
-          html: `
-            <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:40px 20px;">
-              <div style="background:#1a1610;padding:24px;border-radius:12px 12px 0 0;text-align:center;">
-                <div style="color:#c9a84c;font-size:20px;font-weight:700;">Finitive Finance</div>
-                <div style="color:#ffffff;font-size:12px;margin-top:4px;opacity:0.6;">AFFILIATE INVITATION</div>
-              </div>
-              <div style="background:#ffffff;padding:32px;border:1px solid #e8e4db;border-top:none;">
-                <p style="color:#1a1610;font-size:18px;font-weight:600;margin:0 0 16px;">You've been invited to join Finitive Finance as an Affiliate Partner</p>
-                <p style="color:#5a5245;font-size:14px;line-height:1.6;margin:0 0 24px;">Hi ${inviteName}, you have been invited by the Finitive Finance team to join our affiliate partner program. As an affiliate partner you can submit referrals and earn 2% of the total closed deal value.</p>
-                <div style="text-align:center;margin-bottom:24px;">
-                  <a href="https://finitive-finance.vercel.app/login"
-                     style="display:inline-block;background:#c9a84c;color:#fff;font-size:14px;font-weight:600;padding:14px 32px;border-radius:8px;text-decoration:none;">
-                    Accept invitation →
-                  </a>
-                </div>
-                <p style="color:#9a9080;font-size:13px;">Questions? Contact us at <a href="mailto:affiliates@finitivefinance.com.au" style="color:#c9a84c;">affiliates@finitivefinance.com.au</a></p>
-              </div>
-              <div style="background:#f5f3ee;padding:16px;border-radius:0 0 12px 12px;text-align:center;border:1px solid #e8e4db;border-top:none;">
-                <p style="color:#9a9080;font-size:12px;margin:0;">© 2026 Finitive Finance. All rights reserved.</p>
-              </div>
-            </div>
-          `
-        })
-      })
+     const { subject, html } = inviteEmail({
+  inviteeName: inviteName,
+  commissionRate: 0.02,
+})
+
+await fetch('/api/send-email', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    to: inviteEmailAddress,
+    subject,
+    html,
+  })
+})
       setInviteSuccess(true)
       setInviteEmail('')
       setInviteName('')
