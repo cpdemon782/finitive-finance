@@ -336,11 +336,26 @@ const res = await fetch('/api/send-email', {
           </div>
 
           {selectedLead.description && (
-            <div className="p-4">
-              <div className="text-[10px] font-mono text-[#9a9080] mb-2 tracking-widest">NOTES</div>
-              <p className="text-sm text-[#5a5245] leading-relaxed">{selectedLead.description}</p>
-            </div>
-          )}
+  <div className="p-4">
+    <div className="text-[10px] font-mono text-[#9a9080] mb-2 tracking-widest">NOTES</div>
+    <p className="text-sm text-[#5a5245] leading-relaxed">{selectedLead.description}</p>
+  </div>
+)}
+
+{/* Delete lead */}
+<div className="p-4 border-t border-black/5">
+  <button
+    onClick={async () => {
+      if (!confirm(`Delete ${selectedLead.company_name}? This cannot be undone.`)) return
+      await supabase.from('leads').delete().eq('id', selectedLead.id)
+      setSelectedLead(null)
+      await fetchLeads()
+    }}
+    className="w-full py-2 text-xs font-medium text-red-500 border border-red-100 rounded-lg hover:bg-red-50 transition-colors"
+  >
+    Delete lead
+  </button>
+</div>
         </div>
       )}
     </div>
