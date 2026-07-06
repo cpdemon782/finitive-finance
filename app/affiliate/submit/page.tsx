@@ -105,7 +105,7 @@ export default function SubmitLeadPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          to: 'simon@clesandco.com.au',
+          to: 'info@finitivefinance.com.au',
           subject,
           html,
         })
