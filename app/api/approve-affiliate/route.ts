@@ -82,8 +82,9 @@ export async function GET(request: Request) {
     email: application.email,
   })
 
-  const resetLink = resetData?.properties?.action_link || 'https://finitivefinance.app/login'
-
+const actionLink = resetData?.properties?.action_link || ''
+const resetLink = actionLink.replace('localhost:3000', 'finitivefinance.app') || 'https://finitivefinance.app/reset-password'
+  
   try {
     const { subject, html } = welcomeEmail({
       affiliateName: application.full_name,
