@@ -298,6 +298,8 @@ export default function AllLeadsPage() {
       setSelectedLead(null)
       const { data } = await supabase.from('leads').select('*').order('created_at', { ascending: false })
       setLeads(data || [])
+      setFiltered(data || [])
+
     }}
     className="w-full py-2.5 text-xs font-medium text-red-500 border border-red-100 rounded-lg hover:bg-red-50 transition-colors"
   >
