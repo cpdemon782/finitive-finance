@@ -293,13 +293,13 @@ export default function AllLeadsPage() {
   </button>
   <button
     onClick={async () => {
+      e.stopPropagation()
       if (!confirm(`Delete ${selectedLead.company_name}? This cannot be undone.`)) return
       await supabase.from('leads').delete().eq('id', selectedLead.id)
       setSelectedLead(null)
       const { data } = await supabase.from('leads').select('*').order('created_at', { ascending: false })
       setLeads(data || [])
       setFiltered(data || [])
-
     }}
     className="w-full py-2.5 text-xs font-medium text-red-500 border border-red-100 rounded-lg hover:bg-red-50 transition-colors"
   >
