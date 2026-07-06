@@ -284,14 +284,26 @@ export default function AllLeadsPage() {
                 </div>
               )}
 
-              <div className="p-4 mt-auto border-t border-black/5">
-                <button
-                  onClick={() => router.push('/dashboard/pipeline')}
-                  className="w-full py-2.5 bg-[#c9a84c] text-white text-sm font-medium rounded-lg hover:bg-[#a8863a] transition-colors"
-                >
-                  View in pipeline →
-                </button>
-              </div>
+              <div className="p-4 mt-auto border-t border-black/5 flex flex-col gap-2">
+  <button
+    onClick={() => router.push('/dashboard/pipeline')}
+    className="w-full py-2.5 bg-[#c9a84c] text-white text-sm font-medium rounded-lg hover:bg-[#a8863a] transition-colors"
+  >
+    View in pipeline →
+  </button>
+  <button
+    onClick={async () => {
+      if (!confirm(`Delete ${selectedLead.company_name}? This cannot be undone.`)) return
+      await supabase.from('leads').delete().eq('id', selectedLead.id)
+      setSelectedLead(null)
+      const { data } = await supabase.from('leads').select('*').order('created_at', { ascending: false })
+      setLeads(data || [])
+    }}
+    className="w-full py-2.5 text-xs font-medium text-red-500 border border-red-100 rounded-lg hover:bg-red-50 transition-colors"
+  >
+    Delete lead
+  </button>
+</div>
             </div>
           )}
         </div>
