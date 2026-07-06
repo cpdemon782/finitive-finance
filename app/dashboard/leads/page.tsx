@@ -292,7 +292,7 @@ export default function AllLeadsPage() {
     View in pipeline →
   </button>
   <button
-    onClick={async () => {
+    onClick={async (e) => {
       e.stopPropagation()
       if (!confirm(`Delete ${selectedLead.company_name}? This cannot be undone.`)) return
       await supabase.from('leads').delete().eq('id', selectedLead.id)
