@@ -5,15 +5,14 @@ import { useRouter } from 'next/navigation'
 import { supabase, getUserRole, signOut } from '../../../lib/supabase'
 import Sidebar from '../../components/Sidebar'
 
-const STAGES = ['New Lead', 'Reviewing', 'Due Diligence', 'Term Sheet', 'Closed', 'Lost']
+const STAGES = ['New Lead', 'Progress', 'Outcome', 'Settlement Date', 'Cancelled/Pipeline']
 
 const stageColors: Record<string, string> = {
   'New Lead': 'bg-blue-100 text-blue-700',
-  'Reviewing': 'bg-amber-100 text-amber-700',
-  'Due Diligence': 'bg-purple-100 text-purple-700',
-  'Term Sheet': 'bg-green-100 text-green-700',
-  'Closed': 'bg-emerald-100 text-emerald-700',
-  'Lost': 'bg-red-100 text-red-700',
+  'Progress': 'bg-amber-100 text-amber-700',
+  'Outcome': 'bg-purple-100 text-purple-700',
+  'Settlement Date': 'bg-green-100 text-green-700',
+  'Cancelled/Pipeline': 'bg-red-100 text-red-700',
 }
 
 export default function ReportsPage() {
