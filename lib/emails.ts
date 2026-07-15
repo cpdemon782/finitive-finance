@@ -172,16 +172,15 @@ export function stageChangeEmail({
   commissionRate?: number
 }) {
   const commission = dealSizeMax * commissionRate
-  const isClosed = newStage === 'Closed'
-  const isLost = newStage === 'Lost'
+  const isClosed = newStage === 'Settlement Date'
+  const isLost = newStage === 'Cancelled/Pipeline'
 
   const stageMessages: Record<string, string> = {
-    'Reviewing': 'Great news — the Finitive Finance team is actively reviewing your referral. We\'ll keep you updated as things progress.',
-    'Due Diligence': 'Your referral has progressed to Due Diligence. Our team is conducting a thorough review of this opportunity.',
-    'Term Sheet': 'Excellent progress — a term sheet has been issued for this deal. We\'re getting closer to close.',
-    'Closed': `Congratulations! This deal has been successfully closed. Your commission of <strong style="color:#18b877;">$${(commission / 1000000).toFixed(2)}M</strong> is being processed and will be paid within 30 days.`,
-    'Lost': 'After thorough review, this opportunity did not meet our current investment criteria. We appreciate your referral and look forward to reviewing future opportunities from you.',
-  }
+  'Progress': 'Great news — your referral is actively progressing with the Finitive Finance team. We\'ll keep you updated as things move forward.',
+  'Outcome': 'Your referral has reached the outcome stage. Our team is finalising the details of this opportunity.',
+  'Settlement Date': `Excellent progress — a settlement date has been set for this deal. Your commission of <strong style="color:#18b877;">$${(commission / 1000000).toFixed(2)}M</strong> is being processed and will be paid within 30 days.`,
+  'Cancelled/Pipeline': 'After thorough review, this opportunity did not meet our current criteria. We appreciate your referral and look forward to reviewing future opportunities from you.',
+}
 
   const message = stageMessages[newStage] || `Your referral has been updated to ${newStage}.`
 
