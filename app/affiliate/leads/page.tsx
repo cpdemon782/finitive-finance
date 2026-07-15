@@ -7,20 +7,18 @@ import Sidebar from '../../components/Sidebar'
 
 const stageColors: Record<string, string> = {
   'New Lead': 'bg-blue-100 text-blue-700',
-  'Reviewing': 'bg-amber-100 text-amber-700',
-  'Due Diligence': 'bg-purple-100 text-purple-700',
-  'Term Sheet': 'bg-green-100 text-green-700',
-  'Closed': 'bg-emerald-100 text-emerald-700',
-  'Lost': 'bg-red-100 text-red-700',
+  'Progress': 'bg-amber-100 text-amber-700',
+  'Outcome': 'bg-purple-100 text-purple-700',
+  'Settlement Date': 'bg-green-100 text-green-700',
+  'Cancelled/Pipeline': 'bg-red-100 text-red-700',
 }
 
 const stageNotes: Record<string, string> = {
   'New Lead': 'Your referral has been received and is being reviewed by our team.',
-  'Reviewing': 'Our team is actively reviewing the financial details of this opportunity.',
-  'Due Diligence': 'This deal has progressed to due diligence. Our team is conducting a thorough review.',
-  'Term Sheet': 'Excellent progress — a term sheet has been issued for this deal.',
-  'Closed': 'This deal has been successfully closed. Your commission is being processed.',
-  'Lost': 'After thorough review, this opportunity did not meet our current investment criteria. Thank you for the referral.',
+  'Progress': 'Great news — your referral is actively progressing with our team.',
+  'Outcome': 'Your referral has reached the outcome stage. Our team is finalising the details.',
+  'Settlement Date': 'Excellent progress — a settlement date has been set for this deal.',
+  'Cancelled/Pipeline': 'After thorough review, this opportunity did not meet our current criteria. Thank you for the referral.',
 }
 
 export default function AffiliateLeadsPage() {
@@ -65,10 +63,9 @@ export default function AffiliateLeadsPage() {
     )
   }
 
-  const activeLeads = leads.filter(l => !['Closed', 'Lost'].includes(l.stage))
+  const activeLeads = leads.filter(l => !['Cancelled/Pipeline'].includes(l.stage))
   const closedLeads = leads.filter(l => l.stage === 'Closed')
-  const lostLeads = leads.filter(l => l.stage === 'Lost')
-
+const lostLeads = leads.filter(l => l.stage === 'Cancelled/Pipeline')
   return (
     <div className="min-h-screen bg-[#f5f5f7] flex">
 
