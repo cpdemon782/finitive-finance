@@ -337,11 +337,27 @@ to: inviteEmail,
                         }`}>{lead.stage}</span>
                       </div>
                     ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
+                 </div>
+            )}
+          </div>
+
+          {/* Delete affiliate */}
+          <div className="p-4 border-t border-black/5 mt-auto">
+            <button
+              onClick={async (e) => {
+                e.stopPropagation()
+                if (!confirm(`Delete ${selectedAffiliate.full_name}? This will permanently remove their account and cannot be undone.`)) return
+                await supabase.from('users').delete().eq('id', selectedAffiliate.id)
+                setAffiliates(prev => prev.filter(a => a.id !== selectedAffiliate.id))
+                setSelectedAffiliate(null)
+              }}
+              className="w-full py-2 text-xs font-medium text-red-500 border border-red-100 rounded-lg hover:bg-red-50 transition-colors"
+            >
+              Delete affiliate
+            </button>
+          </div>
+        </div>
+      )}
 
           {/* Invite panel */}
           {showInvite && (
