@@ -118,9 +118,24 @@ export default function LoginPage() {
             />
           </div>
           <div className="text-right mb-5">
-            <button className="text-xs text-[#c9a84c] hover:text-[#a8863a] transition-colors">
-              Forgot password?
-            </button>
+            <button
+  onClick={async () => {
+    if (!email) {
+      setError('Please enter your email address first.')
+      return
+    }
+    setLoading(true)
+    await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: 'https://finitivefinance.app/reset-password',
+    })
+    setError('')
+    setLoading(false)
+    alert('Password reset email sent — check your inbox.')
+  }}
+  className="text-xs text-[#c9a84c] hover:text-[#a8863a] transition-colors"
+>
+  Forgot password?
+</button>
           </div>
           {error && (
             <div className="mb-4 px-3 py-2.5 bg-red-50 border border-red-100 rounded-lg text-xs text-red-600">
