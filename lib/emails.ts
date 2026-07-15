@@ -138,7 +138,7 @@ export function newLeadEmail({
       { label: 'Sector', value: sector },
       { label: 'Deal type', value: dealType || '—' },
       { label: 'Est. deal size', value: dealSizeMax ? `$${(dealSizeMax / 1000000).toFixed(0)}M` : '—' },
-      { label: 'Est. commission (2%)', value: dealSizeMax ? `$${(dealSizeMax * 0.02 / 1000000).toFixed(2)}M` : '—' },
+      { label: 'Est. commission (0.02%)', value: dealSizeMax ? `$${(dealSizeMax * 0.002 / 1000000).toFixed(2)}M` : '—' },
       { label: 'Primary contact', value: `${contactName} — ${contactEmail}${contactPhone ? ` — ${contactPhone}` : ''}` },
     ])}
 
@@ -163,7 +163,7 @@ export function stageChangeEmail({
   companyName,
   newStage,
   dealSizeMax,
-  commissionRate = 0.02,
+  commissionRate = 0.002,
 }: {
   affiliateName: string
   companyName: string
@@ -284,7 +284,7 @@ export function applicationEmail({
 export function welcomeEmail({
   affiliateName,
   affiliateEmail,
-  commissionRate = 0.02,
+  commissionRate = 0.002,
   resetLink,
 }: {
   affiliateName: string
@@ -369,7 +369,7 @@ export function supportEmail({
 // ─────────────────────────────────────────────
 export function inviteEmail({
   inviteeName,
-  commissionRate = 0.02,
+  commissionRate = 0.002,
 }: {
   inviteeName: string
   commissionRate?: number
