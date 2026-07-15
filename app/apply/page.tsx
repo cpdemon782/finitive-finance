@@ -111,7 +111,7 @@ export default function ApplyPage() {
                 <span className="text-[#c9a84c] text-lg">💰</span>
               </div>
               <div>
-                <div className="text-sm font-semibold text-white">Earn up to 2% commission</div>
+                <div className="text-sm font-semibold text-white">Earn 0.2% commission</div>
                 <div className="text-xs text-white/50 mt-0.5">On every deal you refer that closes</div>
               </div>
             </div>
