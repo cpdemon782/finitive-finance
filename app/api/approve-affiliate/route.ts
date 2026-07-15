@@ -69,7 +69,7 @@ export async function GET(request: Request) {
     role: 'affiliate',
     company_name: application.company_name,
     phone: application.phone,
-    commission_rate: 0.02,
+    commission_rate: 0.002,
   })
 
   await supabaseAdmin
