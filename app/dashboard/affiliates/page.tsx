@@ -405,8 +405,8 @@ to: inviteEmail,
                       />
                     </div>
                     <div className="bg-[#f5f3ee] rounded-lg p-3 text-xs text-[#5a5245] leading-relaxed">
-                      <strong className="text-[#1a1610]">Note:</strong> After sending the invite, you'll need to manually create their account in Supabase Auth and add them to the users table with role <span className="font-mono bg-white px-1 rounded">affiliate</span>.
-                    </div>
+  <strong className="text-[#1a1610]">Note:</strong> The affiliate will receive an invitation email with a link to apply. Once they submit their application you can approve them from the <a href="/dashboard/applications" className="text-[#c9a84c]">Applications page</a>.
+</div>
                     <button
                       onClick={sendInvite}
                       disabled={inviting || !inviteEmail || !inviteName}
