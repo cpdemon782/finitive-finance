@@ -7,11 +7,10 @@ import Sidebar from '../../components/Sidebar'
 
 const stageColors: Record<string, string> = {
   'New Lead': 'bg-blue-100 text-blue-700',
-  'Reviewing': 'bg-amber-100 text-amber-700',
-  'Due Diligence': 'bg-purple-100 text-purple-700',
-  'Term Sheet': 'bg-green-100 text-green-700',
-  'Closed': 'bg-emerald-100 text-emerald-700',
-  'Lost': 'bg-red-100 text-red-700',
+  'Progress': 'bg-amber-100 text-amber-700',
+  'Outcome': 'bg-purple-100 text-purple-700',
+  'Settlement Date': 'bg-green-100 text-green-700',
+  'Cancelled/Pipeline': 'bg-red-100 text-red-700',
 }
 
 export default function AllLeadsPage() {
@@ -119,11 +118,10 @@ export default function AllLeadsPage() {
           >
             <option value="All">All stages</option>
             <option>New Lead</option>
-            <option>Reviewing</option>
-            <option>Due Diligence</option>
-            <option>Term Sheet</option>
-            <option>Closed</option>
-            <option>Lost</option>
+            <option>Progress</option>
+            <option>Outcome</option>
+            <option>Settlement Date</option>
+            <option>Cancelled/Pipeline</option>
           </select>
           <select
             value={sourceFilter}
