@@ -51,7 +51,7 @@ export default function AffiliatesPage() {
 
   function getAffiliateStats(affiliateId: string) {
     const affLeads = getAffiliateLeads(affiliateId)
-    const rate = affiliates.find(a => a.id === affiliateId)?.commission_rate || 0.02
+    const rate = affiliates.find(a => a.id === affiliateId)?.commission_rate || 0.002
     const closed = affLeads.filter(l => l.stage === 'Closed')
     const active = affLeads.filter(l => !['Closed', 'Lost'].includes(l.stage))
     const earned = closed.reduce((sum, l) => sum + ((l.deal_size_max || 0) * rate), 0)
@@ -76,7 +76,7 @@ export default function AffiliatesPage() {
     try {
 const { subject, html } = inviteEmailTemplate({
   inviteeName: inviteName,
-  commissionRate: 0.02,
+  commissionRate: 0.002,
 })
 
 await fetch('/api/send-email', {
@@ -188,7 +188,7 @@ to: inviteEmail,
                       onClick={() => {
                         setSelectedAffiliate(isSelected ? null : affiliate)
                         setEditingRate(false)
-                        setNewRate(((affiliate.commission_rate || 0.02) * 100).toString())
+                        setNewRate(((affiliate.commission_rate || 0.002) * 100).toString())
                       }}
                       className={`px-5 py-4 border-b border-black/5 last:border-0 cursor-pointer transition-all ${isSelected ? 'bg-[#faf8f3]' : 'hover:bg-[#f5f3ee]'}`}
                     >
@@ -205,7 +205,7 @@ to: inviteEmail,
                         <div className="text-sm text-[#1a1610] font-medium">{stats.total}</div>
                         <div>
                           <span className="text-sm font-mono font-semibold text-[#c9a84c]">
-                            {((affiliate.commission_rate || 0.02) * 100).toFixed(1)}%
+                            {((affiliate.commission_rate || 0.002) * 100).toFixed(1)}%
                           </span>
                         </div>
                         <div className="text-sm font-mono text-[#18b877] font-semibold">
@@ -305,7 +305,7 @@ to: inviteEmail,
                 ) : (
                   <div className="flex items-center justify-between">
                     <span className="text-2xl font-bold font-mono text-[#c9a84c]">
-                      {((selectedAffiliate.commission_rate || 0.02) * 100).toFixed(1)}%
+                      {((selectedAffiliate.commission_rate || 0.002) * 100).toFixed(1)}%
                     </span>
                     <button
                       onClick={() => setEditingRate(true)}
