@@ -227,9 +227,9 @@ export default function NewLeadPage() {
                 <label className="block text-xs font-medium text-[#5a5245] mb-1.5">Initial stage</label>
                 <select name="stage" value={form.stage} onChange={handleChange} className="w-full px-3 py-2.5 text-sm rounded-lg border border-black/10 bg-[#f5f3ee] text-[#1a1610] focus:outline-none focus:border-[#c9a84c] focus:bg-white transition-all">
                   <option>New Lead</option>
-                  <option>Reviewing</option>
-                  <option>Due Diligence</option>
-                  <option>Term Sheet</option>
+                  <option>Progress</option>
+                  <option>Outcome</option>
+                  <option>Settlement Date</option>
                 </select>
               </div>
               <div className="col-span-2">
